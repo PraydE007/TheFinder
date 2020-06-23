@@ -1,39 +1,30 @@
-NAME = endgame
+NAME = finder
 
-SRCS = src/mx_main.c \
-		src/mx_move_player.c \
-		src/vrag.c \
-		src/mx_menu.c \
-		src/mx_catch_waste.c \
-
+# SOFTWARE CODE
 INC = inc/header.h
+FILES = main.c \
+	mx_load_map.c \
 
-SDL =   -F inc/framework -I inc/framework/SDL2.framework/SDL2 inc/framework/SDL2_image.framework/SDL2_image inc/framework/SDL2_mixer.framework/SDL2_mixer
+SRCS = $(addprefix src/, $(FILES))
 
-CFLAGS = -std=c11 -Wall -Wextra -Werror -g \
-	 	 -rpath inc/framework -framework SDL2 \
-		 -framework SDL2_image \
-		-framework SDL2_ttf \
-		-I inc/framework/SDL2_image.framework/Headers \
-		-I inc/framework/SDL2_ttf.framework/Headers 
+# FLAGS
+CFLAGS = -std=c11 -Wall -Wextra -Werror -Wpedantic
+SDL = `pkg-config --cflags --libs sdl2` -lSDL2_image
+JSON = `pkg-config --cflags --libs json-c`
+
 all: $(NAME)
 
-$(NAME): install clean
+$(NAME): install
 
 install:
-	@cp $(SRCS) .
-	@cp $(INC) .
-	@clang $(CFLAGS) -o $(NAME) $(SRCS) $(LIBS) $(SDL) -I inc
+#	@echo $(SDL)
+	@clang $(CFLAGS) $(SDL) $(JSON) -I inc $(SRCS) -o $(NAME)
 
-uninstall: clean
+uninstall:
 	@rm -rf $(NAME)
 
-clean:
-	@rm -rf header.h
-	@rm -rf mx_main.c \
-			mx_move_player.c \
-			vrag.c \
-			mx_menu.c \
-			mx_catch_waste.c \
+# clean:
+# 	@rm -rf header.h
+# 	@rm -rf main.c
 
-reinstall: all 
+reinstall: all
